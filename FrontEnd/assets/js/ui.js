@@ -37,38 +37,20 @@ filterButtons.forEach((button) => {
 
 // Filtres
 
-const btnFilterAll = document.getElementById('btn-filter-all')
-const btnFilterObjets = document.getElementById('btn-filter-objets')
-const btnFilterApparts = document.getElementById('btn-filter-apparts')
-const btnFilterHotels = document.getElementById('btn-filter-hotels')
+filterButtons.forEach((button) => {
+  let filterName = button.getAttribute("name");
+  button.addEventListener("click", () => filterByCategory(filterName));
 
-btnFilterAll.addEventListener('click', () => {
-    const filteredWorks = works.filter(work => {
-        return work.title
+  function filterByCategory(filter) {
+    works.forEach((work) => {
+        let filterValue = filter.toLowerCase()
+        let filteredWorks = works.filter(work => {
+            return filterValue === 'all' ? work.title : work.category.name.toLowerCase() === filterValue
+        })
+
+        renderWorks(filteredWorks)
     })
-    renderWorks(filteredWorks)
-})
-
-btnFilterObjets.addEventListener('click', () => {
-    const filteredWorks = works.filter(work => {
-        return work.category.name === "Objets"
-    })
-    renderWorks(filteredWorks)
-})
-
-btnFilterApparts.addEventListener('click', () => {
-    const filteredWorks = works.filter(work => {
-        return work.category.name === "Appartements"
-    })
-    renderWorks(filteredWorks)
-})
-
-btnFilterHotels.addEventListener('click', () => {
-    const filteredWorks = works.filter(work => {
-        return work.category.name === "Hotels & restaurants"
-    })
-    renderWorks(filteredWorks)
-})
-
+  }
+});
 
 renderWorks(works);
