@@ -125,6 +125,40 @@ li:hover {
 	text-align: center;
 	margin-bottom: 1em;
 }
+
+/* filters */
+
+.filters {
+	text-align: center;
+	margin-bottom: 50px;
+}
+
+.btn-filter {
+	margin-right: 10px;
+	min-width: 100px;
+	padding: 9px;
+	background-color: transparent;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	color: #1D6154;
+	font-family: 'Syne';
+	font-size: 16px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all .3s ease;
+	outline: none;
+}
+
+.btn-filter.active,
+.btn-filter:hover {
+	background-color: #1D6154;
+	color: #FFFFFF;
+}
+
+.btn-filter:last-child {
+	margin-right: 0;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
