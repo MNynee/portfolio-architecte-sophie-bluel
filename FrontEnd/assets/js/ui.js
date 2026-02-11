@@ -8,32 +8,32 @@ async function renderWorks(worksList) {
   gallery.innerHTML = "";
 
   worksList.forEach((work) => {
-    const article = document.createElement('figure')
-    article.classList.add('gallery-work')
+    const article = document.createElement("figure");
+    article.classList.add("gallery-work");
 
-    const articleImg = document.createElement('img')
-    articleImg.src = work.imageUrl
-    articleImg.alt = work.title
+    const articleImg = document.createElement("img");
+    articleImg.src = work.imageUrl;
+    articleImg.alt = work.title;
 
-    const articleTitle = document.createElement('figcaption')
-    articleTitle.innerText = work.title
+    const articleTitle = document.createElement("figcaption");
+    articleTitle.innerText = work.title;
 
-    article.append(articleImg, articleTitle)
-    gallery.appendChild(article)
+    article.append(articleImg, articleTitle);
+    gallery.appendChild(article);
   });
 }
 
 // Changer affichage des boutons de filtrage
 
-const filterButtons = document.querySelectorAll('.btn-filter')
+const filterButtons = document.querySelectorAll(".btn-filter");
 
 filterButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        const activeFilter = document.querySelector('.active')
-        activeFilter.classList.toggle('active')
-        button.classList.toggle('active')
-    })
-})
+  button.addEventListener("click", () => {
+    const activeFilter = document.querySelector(".active");
+    activeFilter.classList.toggle("active");
+    button.classList.toggle("active");
+  });
+});
 
 // Filtres
 
@@ -41,15 +41,17 @@ filterButtons.forEach((button) => {
   let filterName = button.getAttribute("name");
   button.addEventListener("click", () => filterByCategory(filterName));
 
-  function filterByCategory(filter) {
+  function filterByCategory(filterName) {
     works.forEach((work) => {
-        let filterValue = filter.toLowerCase()
-        let filteredWorks = works.filter(work => {
-            return filterValue === 'all' ? work.title : work.category.name.toLowerCase() === filterValue
-        })
+      let filterValue = filterName.toLowerCase();
+      let filteredWorks = works.filter((work) => {
+        return filterValue === "all"
+          ? work.title
+          : work.category.name.toLowerCase() === filterValue;
+      });
 
-        renderWorks(filteredWorks)
-    })
+      renderWorks(filteredWorks);
+    });
   }
 });
 
