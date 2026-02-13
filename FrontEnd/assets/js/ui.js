@@ -55,9 +55,35 @@ filterButtons.forEach((button) => {
   }
 });
 
+function updateNavAfterAuthentication() {
+    const loginLink = document.getElementById('login-link')
+    const editHeader = document.querySelector('.edit-mode-header')
+    const editButton = document.getElementById('edit-button')
+    const filters = document.querySelector('.filters')
+    const galleryTitle = document.querySelector('.title')
 
+    if (localStorage.getItem('token')) {
+        loginLink.innerText = 'logout';
+        loginLink.href = '#'
+        loginLink.addEventListener('click', (event) => {
+            event.preventDefault()
+            localStorage.removeItem('token')
+            localStorage.removeItem('userId')
+            window.location.reload()
+        })
+
+        editHeader.style.display = 'flex'
+        editButton.style.display = 'flex'
+        filters.style.display = 'none'
+        galleryTitle.style.marginBottom = '92px'
+    } else {
+        loginLink.innerText = 'login'
+        loginLink.href = 'pages/login.html'
+    }
+}
 
 renderWorks(works);
 if (document.getElementById('login-form')) {
     loginUser();
 }
+updateNavAfterAuthentication()
