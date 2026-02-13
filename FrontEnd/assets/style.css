@@ -243,6 +243,11 @@ input[type="submit"]:hover {
 	height: 100vh;
 }
 
+.login-error {
+	color: #ff0000;
+	margin-bottom: 30px;
+}
+
 #login .passe-oublie {
 	text-align: center;
 	text-decoration: underline;

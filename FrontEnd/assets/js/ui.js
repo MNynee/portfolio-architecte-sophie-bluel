@@ -1,4 +1,4 @@
-import { getWorks } from "./api.js";
+import { getWorks, loginUser } from "./api.js";
 
 // Afficher tous les projets
 const works = await getWorks();
@@ -55,4 +55,9 @@ filterButtons.forEach((button) => {
   }
 });
 
+
+
 renderWorks(works);
+if (document.getElementById('login-form')) {
+    loginUser();
+}
