@@ -2,10 +2,11 @@ import { getWorks, loginUser } from "./api.js";
 
 // Afficher tous les projets
 const works = await getWorks();
+const gallery = document.getElementById("gallery");
+const modalGallery = document.querySelector('.modal-gallery');
 
-async function renderWorks(worksList) {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
+async function renderWorks(galleryName, worksList) {
+  galleryName.innerHTML = "";
 
   worksList.forEach((work) => {
     const article = document.createElement("figure");
@@ -15,11 +16,24 @@ async function renderWorks(worksList) {
     articleImg.src = work.imageUrl;
     articleImg.alt = work.title;
 
-    const articleTitle = document.createElement("figcaption");
-    articleTitle.innerText = work.title;
+    if (galleryName === gallery) {
+        const articleTitle = document.createElement("figcaption");
+        articleTitle.innerText = work.title;
 
-    article.append(articleImg, articleTitle);
-    gallery.appendChild(article);
+        article.append(articleImg, articleTitle);
+    }
+    if (galleryName === modalGallery) {
+        const deleteButton = document.createElement("button");
+        deleteButton.setAttribute('id', 'delete-button');
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "./assets/icons/delete-button.svg";
+        deleteIcon.alt = "Delete";
+
+        deleteButton.appendChild(deleteIcon);
+        article.append(articleImg, deleteButton);
+    }
+
+    galleryName.appendChild(article);
   });
 }
 
@@ -50,10 +64,12 @@ filterButtons.forEach((button) => {
           : work.category.name.toLowerCase() === filterValue;
       });
 
-      renderWorks(filteredWorks);
+      renderWorks(gallery, filteredWorks);
     });
   }
 });
+
+// Update page after authentication
 
 function updateNavAfterAuthentication() {
     const loginLink = document.getElementById('login-link')
@@ -82,7 +98,24 @@ function updateNavAfterAuthentication() {
     }
 }
 
-renderWorks(works);
+// MODAL FUNCTIONS
+
+// Modify gallery
+
+const btnEditWorks = document.getElementById('edit-button');
+
+btnEditWorks.addEventListener('click', () => {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'flex';
+    modal.removeAttribute('aria-hidden');
+    modal.setAttribute('aria-modal', 'true');
+})
+
+
+// Function calls
+
+renderWorks(gallery, works);
+renderWorks(modalGallery, works);
 if (document.getElementById('login-form')) {
     loginUser();
 }
