@@ -1,9 +1,10 @@
 import { getWorks, loginUser } from "./api.js";
 
-// Afficher tous les projets
 const works = await getWorks();
 const gallery = document.getElementById("gallery");
 const modalGallery = document.querySelector('.modal-gallery');
+
+// Afficher tous les projets
 
 async function renderWorks(galleryName, worksList) {
   galleryName.innerHTML = "";
@@ -25,6 +26,8 @@ async function renderWorks(galleryName, worksList) {
     if (galleryName === modalGallery) {
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute('id', 'delete-button');
+        deleteButton.addEventListener('click', () => deleteWork())
+
         const deleteIcon = document.createElement("img");
         deleteIcon.src = "./assets/icons/delete-button.svg";
         deleteIcon.alt = "Delete";
@@ -100,19 +103,58 @@ function updateNavAfterAuthentication() {
 
 // MODAL FUNCTIONS
 
-// Modify gallery
+// Open edit gallery modal
 
 const btnEditWorks = document.getElementById('edit-button');
+const modal = document.getElementById('modal');
 
 btnEditWorks.addEventListener('click', () => {
-    const modal = document.getElementById('modal');
     modal.style.display = 'flex';
     modal.removeAttribute('aria-hidden');
     modal.setAttribute('aria-modal', 'true');
+    modal.addEventListener('click', closeModal)
+    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
 })
 
+// Close modal
 
-// Function calls
+const btnCloseModal = document.getElementById('close-modal');
+btnCloseModal.addEventListener('click', closeModal)
+
+function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.removeAttribute('aria-modal');
+    modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)
+}
+
+function stopPropagation(e) {
+    e.stopPropagation();
+}
+
+// Open add new work modal
+
+const btnAddWork = document.getElementById('btn-add-work');
+
+btnAddWork.addEventListener('click', () => {
+    const modalWrapper = document.querySelector('.modal-wrapper');
+    modalWrapper.innerHTML = `
+    <div class="modal-nav">
+			<img src="assets/icons/return-modal.svg" alt="Retourner" class="return-modal" id="return-modal">
+			<img src="assets/icons/close-modal.svg" alt="Fermer" class="close-modal" id="close-modal">
+		</div>
+		<div class="modal-content">
+			<h3 class="modal-title">Ajout photo</h3>
+			<form class="modal-form">
+                <div class="img-container"></div>
+            </form>
+			<hr>
+			<button class="button-add" id="btn-send-work">Ajouter une photo</button>
+		</div>
+    `
+})
+
+// FUNCTION CALLS
 
 renderWorks(gallery, works);
 renderWorks(modalGallery, works);
