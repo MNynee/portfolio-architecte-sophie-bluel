@@ -1,11 +1,13 @@
 import { getWorks, loginUser } from "./api.js";
 
-// Afficher tous les projets
 const works = await getWorks();
+const gallery = document.getElementById("gallery");
+const modalGallery = document.querySelector('.modal-gallery');
 
-async function renderWorks(worksList) {
-  const gallery = document.getElementById("gallery");
-  gallery.innerHTML = "";
+// Afficher tous les projets
+
+async function renderWorks(galleryName, worksList) {
+  galleryName.innerHTML = "";
 
   worksList.forEach((work) => {
     const article = document.createElement("figure");
@@ -15,11 +17,26 @@ async function renderWorks(worksList) {
     articleImg.src = work.imageUrl;
     articleImg.alt = work.title;
 
-    const articleTitle = document.createElement("figcaption");
-    articleTitle.innerText = work.title;
+    if (galleryName === gallery) {
+        const articleTitle = document.createElement("figcaption");
+        articleTitle.innerText = work.title;
 
-    article.append(articleImg, articleTitle);
-    gallery.appendChild(article);
+        article.append(articleImg, articleTitle);
+    }
+    if (galleryName === modalGallery) {
+        const deleteButton = document.createElement("button");
+        deleteButton.setAttribute('id', 'delete-button');
+        deleteButton.addEventListener('click', () => deleteWork())
+
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = "./assets/icons/delete-button.svg";
+        deleteIcon.alt = "Delete";
+
+        deleteButton.appendChild(deleteIcon);
+        article.append(articleImg, deleteButton);
+    }
+
+    galleryName.appendChild(article);
   });
 }
 
@@ -50,17 +67,19 @@ filterButtons.forEach((button) => {
           : work.category.name.toLowerCase() === filterValue;
       });
 
-      renderWorks(filteredWorks);
+      renderWorks(gallery, filteredWorks);
     });
   }
 });
+
+// Update page after authentication
 
 function updateNavAfterAuthentication() {
     const loginLink = document.getElementById('login-link')
     const editHeader = document.querySelector('.edit-mode-header')
     const editButton = document.getElementById('edit-button')
     const filters = document.querySelector('.filters')
-    const galleryTitle = document.querySelector('.title')
+    const galleryTitle = document.querySelector('.portfolio-title')
 
     if (localStorage.getItem('token')) {
         loginLink.innerText = 'logout';
@@ -82,7 +101,78 @@ function updateNavAfterAuthentication() {
     }
 }
 
-renderWorks(works);
+// MODAL FUNCTIONS
+
+// Open edit gallery modal
+
+const btnEditWorks = document.getElementById('edit-button');
+const modal = document.getElementById('modal');
+const modalNav = document.getElementById('modal-nav-1');
+const modalContent = document.getElementById('modal-content-1');
+const modalNav2 = document.getElementById('modal-nav-2'); 
+const modalContent2 = document.getElementById('modal-content-2');
+
+btnEditWorks.addEventListener('click', openModal)
+
+function openModal() {
+    modal.style.display = 'flex';
+    modal.removeAttribute('aria-hidden');
+    modal.setAttribute('aria-modal', 'true');
+    modal.addEventListener('click', closeModal)
+    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
+}
+
+// Close modal
+
+const btnCloseModal = document.getElementById('close-modal');
+btnCloseModal.addEventListener('click', closeModal)
+
+function closeModal() {
+    if (modal.classList.contains('modal-2')) {
+        modal.classList.remove('modal-2');
+        modalNav2.style.display = 'none';
+        modalContent2.style.display = 'none';
+        modalNav.style.display = 'flex';
+        modalContent.style.display = 'block';
+    }
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.removeAttribute('aria-modal');
+    modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)
+}
+
+function stopPropagation(e) {
+    e.stopPropagation();
+}
+
+// Change between modals
+
+const btnAddWork = document.getElementById('btn-add-work');
+btnAddWork.addEventListener('click', changeModal)
+
+const btnReturnModal = document.getElementById('return-modal');
+btnReturnModal.addEventListener('click', changeModal)
+
+function changeModal() {
+     if (modal.classList.contains('modal-2')) {
+        modal.classList.remove('modal-2');
+        modalNav2.style.display = 'none';
+        modalContent2.style.display = 'none';
+        modalNav.style.display = 'flex';
+        modalContent.style.display = 'block';
+    } else {
+        modal.classList.add('modal-2');
+        modalNav.style.display = 'none';
+        modalContent.style.display = 'none';
+        modalNav2.style.display = 'flex';
+        modalContent2.style.display = 'block';
+    }
+}
+
+// FUNCTION CALLS
+
+renderWorks(gallery, works);
+renderWorks(modalGallery, works);
 if (document.getElementById('login-form')) {
     loginUser();
 }
