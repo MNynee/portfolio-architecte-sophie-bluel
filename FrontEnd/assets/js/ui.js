@@ -79,7 +79,7 @@ function updateNavAfterAuthentication() {
     const editHeader = document.querySelector('.edit-mode-header')
     const editButton = document.getElementById('edit-button')
     const filters = document.querySelector('.filters')
-    const galleryTitle = document.querySelector('.title')
+    const galleryTitle = document.querySelector('.portfolio-title')
 
     if (localStorage.getItem('token')) {
         loginLink.innerText = 'logout';
@@ -107,14 +107,20 @@ function updateNavAfterAuthentication() {
 
 const btnEditWorks = document.getElementById('edit-button');
 const modal = document.getElementById('modal');
+const modalNav = document.getElementById('modal-nav-1');
+const modalContent = document.getElementById('modal-content-1');
+const modalNav2 = document.getElementById('modal-nav-2'); 
+const modalContent2 = document.getElementById('modal-content-2');
 
-btnEditWorks.addEventListener('click', () => {
+btnEditWorks.addEventListener('click', openModal)
+
+function openModal() {
     modal.style.display = 'flex';
     modal.removeAttribute('aria-hidden');
     modal.setAttribute('aria-modal', 'true');
     modal.addEventListener('click', closeModal)
     modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
-})
+}
 
 // Close modal
 
@@ -122,6 +128,13 @@ const btnCloseModal = document.getElementById('close-modal');
 btnCloseModal.addEventListener('click', closeModal)
 
 function closeModal() {
+    if (modal.classList.contains('modal-2')) {
+        modal.classList.remove('modal-2');
+        modalNav2.style.display = 'none';
+        modalContent2.style.display = 'none';
+        modalNav.style.display = 'flex';
+        modalContent.style.display = 'block';
+    }
     modal.style.display = 'none';
     modal.setAttribute('aria-hidden', 'true');
     modal.removeAttribute('aria-modal');
@@ -132,27 +145,29 @@ function stopPropagation(e) {
     e.stopPropagation();
 }
 
-// Open add new work modal
+// Change between modals
 
 const btnAddWork = document.getElementById('btn-add-work');
+btnAddWork.addEventListener('click', changeModal)
 
-btnAddWork.addEventListener('click', () => {
-    const modalWrapper = document.querySelector('.modal-wrapper');
-    modalWrapper.innerHTML = `
-    <div class="modal-nav">
-			<img src="assets/icons/return-modal.svg" alt="Retourner" class="return-modal" id="return-modal">
-			<img src="assets/icons/close-modal.svg" alt="Fermer" class="close-modal" id="close-modal">
-		</div>
-		<div class="modal-content">
-			<h3 class="modal-title">Ajout photo</h3>
-			<form class="modal-form">
-                <div class="img-container"></div>
-            </form>
-			<hr>
-			<button class="button-add" id="btn-send-work">Ajouter une photo</button>
-		</div>
-    `
-})
+const btnReturnModal = document.getElementById('return-modal');
+btnReturnModal.addEventListener('click', changeModal)
+
+function changeModal() {
+     if (modal.classList.contains('modal-2')) {
+        modal.classList.remove('modal-2');
+        modalNav2.style.display = 'none';
+        modalContent2.style.display = 'none';
+        modalNav.style.display = 'flex';
+        modalContent.style.display = 'block';
+    } else {
+        modal.classList.add('modal-2');
+        modalNav.style.display = 'none';
+        modalContent.style.display = 'none';
+        modalNav2.style.display = 'flex';
+        modalContent2.style.display = 'block';
+    }
+}
 
 // FUNCTION CALLS
 

@@ -50,6 +50,9 @@ a {
 	text-decoration: none;
 	color: #000000;
 }
+button {
+	cursor: pointer;
+}
 /** end reset css**/
 body {
 	font-family: 'Work Sans' ;
@@ -187,7 +190,7 @@ li a:hover {
 
 }
 
-/* Modal */
+/* Modal 1 */
 
 .modal {
 	position: fixed;
@@ -208,15 +211,17 @@ li a:hover {
 	border-radius: 10px;
 }
 
-.modal-header {
+.modal-nav {
+	width: 100%;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
 }
 
-.close-modal {
+.modal-nav .close-modal,
+.modal-nav .return-modal {
 	display: block;
-	justify-self: end;
+	cursor: pointer;
 }
 
 .modal-content {
@@ -276,7 +281,56 @@ li a:hover {
 	font-family: 'Syne';
 	font-size: .875rem;
 }
-/* Contact Form */
+
+/* Modal 2 */
+
+#modal-nav-2 {
+	display: none;
+	justify-content: space-between;
+}
+
+#modal-content-2 {
+	display: none;
+}
+
+.modal-content .img-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	padding: 22px 0 19px;
+	margin-top: 36px;
+	background-color: #E8F1F6;
+}
+
+.modal-content .btn-upload {
+	background-color: #CBD6DC;
+	padding: 10px 33px;
+	border: none;
+	border-radius: 50px;
+	font-family: 'Work Sans';
+	font-size: .875rem;
+	font-weight: 500;
+	color: #306685;
+}
+
+.modal-content .upload-info {
+	font-size: .625rem;
+}
+
+.modal-content form hr {
+	margin: 47px 0 32px;
+}
+
+.modal-content .button-send.button-add {
+	margin: 0 auto;
+	cursor: not-allowed;
+    pointer-events: none;
+    opacity: .6;
+    background-color: #ccc;
+}
+
+/* Contact Form, Login Form, New Work Form */
 
 #contact,
 #login {
@@ -292,22 +346,25 @@ margin: auto;
 	margin-bottom: 20px;
 }
 #contact form,
-#login form {
+#login form,
+.modal-form {
 	text-align: left;
-	margin-top:30px;
+	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
 }
 
 #contact input,
-#login input {
+#login input,
+.modal-content input {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 #contact label,
-#login label {
+#login label,
+.modal-content label {
 	margin: 2em 0 1em 0;
 }
 #contact textarea {
@@ -373,14 +430,14 @@ input[type="submit"]:hover {
 	font-size: .875rem;
 }
 
-.title {
+.portfolio-title {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	gap: 31px;
 }
 
-.title .edit-button {
+.portfolio-title .edit-button {
 	margin-bottom: 30px;
 	display: none;
 	align-items: center;
