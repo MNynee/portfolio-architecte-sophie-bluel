@@ -71,11 +71,17 @@
 <aside class="modal" id="modal" role="dialog" aria-hidden="true" aria-labelledby="modal-title">
 	<div class="modal-wrapper js-modal-stop">
 		<div class="modal-nav" id="modal-nav-1">
-			<img src="assets/icons/close-modal.svg" alt="Fermer" class="close-modal" id="close-modal">
+			<button class="close-modal" id="close-modal">
+				<img src="assets/icons/close-modal.svg" alt="Fermer">
+			</button>
 		</div>
 		<div class="modal-nav" id="modal-nav-2">
-			<img src="assets/icons/return-modal.svg" alt="Retourner" class="return-modal" id="return-modal">
-			<img src="assets/icons/close-modal.svg" alt="Fermer" class="close-modal" id="close-modal">
+			<button class="return-modal" id="return-modal">
+				<img src="assets/icons/return-modal.svg" alt="Retourner">
+			</button>
+			<button class="close-modal" id="close-modal">
+				<img src="assets/icons/close-modal.svg" alt="Fermer">
+			</button>
 		</div>
 		<div class="modal-content" id="modal-content-1">
 			<h3 class="modal-title">Galerie photo</h3>
@@ -91,11 +97,11 @@
                 <input type="file" id="img-upload" accept="image/png, image/jpeg" hidden>
                 <p class="upload-info">jpg, png : 4mo max</p>
             </div>
-			<form class="modal-form" method="post">
+			<form class="modal-form" id="modal-form method="post">
                 <label for="title">Titre</label>
 			    <input type="text" name="title" id="title">
 			    <label for="category">Catégorie</label>
-			    <input type="text" name="category" id="category">
+			    <select name="category" id="category"></select>
                 <hr>
                 <button class="button-send button-add" id="btn-send-work" disabled>Valider</button>
             </form>

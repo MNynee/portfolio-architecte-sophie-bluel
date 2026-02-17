@@ -220,8 +220,14 @@ li a:hover {
 
 .modal-nav .close-modal,
 .modal-nav .return-modal {
-	display: block;
+	background-color: transparent;
+	border: none;
 	cursor: pointer;
+}
+
+.modal-nav .close-modal img,
+.modal-nav .return-modal img {
+	display: block;
 }
 
 .modal-content {
@@ -356,12 +362,14 @@ margin: auto;
 
 #contact input,
 #login input,
-.modal-content input {
+.modal-content input,
+.modal-content select {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
+
 #contact label,
 #login label,
 .modal-content label {

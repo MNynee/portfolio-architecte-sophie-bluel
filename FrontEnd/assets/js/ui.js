@@ -1,4 +1,4 @@
-import { getWorks, loginUser } from "./api.js";
+import { getWorks, loginUser, getWorkById } from "./api.js";
 
 const works = await getWorks();
 const gallery = document.getElementById("gallery");
@@ -26,7 +26,16 @@ async function renderWorks(galleryName, worksList) {
     if (galleryName === modalGallery) {
         const deleteButton = document.createElement("button");
         deleteButton.setAttribute('id', 'delete-button');
-        deleteButton.addEventListener('click', () => deleteWork())
+        deleteButton.addEventListener('click', async () => {
+            try {
+                await deleteWork(work.id)
+                renderWorks(modalGallery, works)
+                renderWorks(gallery, works)
+            } catch (error) {
+                alert('On n\'arrive pas à supprimer cet ouvrage.')
+                throw error
+            }
+        })
 
         const deleteIcon = document.createElement("img");
         deleteIcon.src = "./assets/icons/delete-button.svg";
@@ -168,6 +177,10 @@ function changeModal() {
         modalContent2.style.display = 'block';
     }
 }
+
+// Add new project
+
+
 
 // FUNCTION CALLS
 

@@ -41,6 +41,42 @@
                 throw error
             }
         })
+    }  
+
+    async function getWorkById(workId) {
+        try {
+            const response = await fetch(`http://localhost:5678/api/works/${workId}`)
+            return await response.json()
+        } catch (error) {
+            alert('On n\'arrive pas à trouver cet ouvrage.')
+            throw error
+        }
     }
 
-    export {getWorks, loginUser}
+    async function addNewWork(work) {
+        try {
+            const response = await fetch('http://localhost:5678/api/works', {
+                method: 'POST',
+                headers: { contentType: multitype/form-data, Authorization: `Bearer ${localStorage.getItem('token')}`},
+                body: JSON.stringify(work)
+            })
+
+            return await response.json()
+        } catch (error) {
+            alert('On n\'arrive pas à ajouter cet ouvrage.')
+            throw error
+        }
+    }
+
+    async function deleteWork(workId) {
+        try {
+            await fetch(`http://localhost:5678/api/works/${workId}`, {
+                method: 'DELETE',
+            })
+        } catch (error) {
+            alert('On n\'arrive pas à supprimer cet ouvrage.')
+            throw error
+        }
+    }
+
+    export {getWorks, loginUser, getWorkById, addNewWork, deleteWork}
