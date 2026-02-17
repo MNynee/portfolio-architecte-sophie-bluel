@@ -128,6 +128,7 @@ function openModal() {
     modal.removeAttribute('aria-hidden');
     modal.setAttribute('aria-modal', 'true');
     modal.addEventListener('click', closeModal)
+    modal.querySelector('.js-close-modal').addEventListener('click', closeModal)
     modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
 }
 
@@ -138,6 +139,7 @@ btnCloseModal.addEventListener('click', closeModal)
 
 function closeModal() {
     if (modal.classList.contains('modal-2')) {
+        resetForm()
         modal.classList.remove('modal-2');
         modalNav2.style.display = 'none';
         modalContent2.style.display = 'none';
@@ -145,8 +147,9 @@ function closeModal() {
         modalContent.style.display = 'block';
     }
     modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
+    // modal.setAttribute('aria-hidden', 'true');
     modal.removeAttribute('aria-modal');
+    modal.querySelector('.js-close-modal').removeEventListener('click', closeModal)
     modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)
 }
 
@@ -169,6 +172,7 @@ function changeModal() {
         modalContent2.style.display = 'none';
         modalNav.style.display = 'flex';
         modalContent.style.display = 'block';
+        resetForm()
     } else {
         modal.classList.add('modal-2');
         modalNav.style.display = 'none';
@@ -180,7 +184,63 @@ function changeModal() {
 
 // Add new project
 
+// - Reading image file
 
+const imgContainer = document.querySelector('.img-container')
+const inputUpload = document.getElementById('img-upload')
+
+imgContainer.addEventListener('click', () => {
+    inputUpload.click()
+})
+
+function readFileContent(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            resolve({ url: reader.result, name: file.name})
+        }
+        reader.onerror = () => {
+            reject(`On n\'arrive pas a lire le fichier ${file.name}`)
+        }
+
+        reader.readAsDataURL(file)
+    })
+}
+
+const imgUploaded = document.getElementById('upload-image')
+const btnUpload = document.getElementById('btn-upload')
+const btnInfo = document.getElementById('upload-info')
+
+inputUpload.addEventListener('change', async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+        try {
+            const fileContent = await readFileContent(file)
+            imgUploaded.src = fileContent.url
+            if (imgUploaded.src !== ".assets/icons/upload-image.png") {
+                imgContainer.style.padding = '0'
+                imgUploaded.style.maxHeight = '169px'
+                btnUpload.style.display = 'none'
+                btnInfo.style.display = 'none'
+            }
+        } catch (error) {
+            alert ('On n\'arrive pas à lire ce fichier.')
+            throw error
+        }
+    }
+})
+
+// Reset form
+
+function resetForm() {
+    const form = document.getElementById('modal-form')
+    form.reset()
+
+    imgContainer.style.padding = '22px 0 19px'
+    imgUploaded.src = "./assets/icons/upload-image.png"
+    btnUpload.style.display = 'block'
+    btnInfo.style.display = 'block'
+}
 
 // FUNCTION CALLS
 
