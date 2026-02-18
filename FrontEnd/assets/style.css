@@ -286,6 +286,7 @@ li a:hover {
 	border-radius: 60px;
 	font-family: 'Syne';
 	font-size: .875rem;
+	margin: 0 auto;
 }
 
 /* Modal 2 */
@@ -328,8 +329,7 @@ li a:hover {
 	margin: 47px 0 32px;
 }
 
-.modal-content .button-send.button-add {
-	margin: 0 auto;
+.modal-content .button-add.disabled {
 	cursor: not-allowed;
     pointer-events: none;
     opacity: .6;

@@ -92,21 +92,21 @@
 		<div class="modal-content" id="modal-content-2">
 			<h3 class="modal-title">Ajout photo</h3>
             <div class="img-container">
-                <img src="assets/icons/upload-image.png" alt="Ajouter photo" class="upload-icon" id="upload-image">
+                <img src="assets/icons/upload-image.png" alt="Ajouter photo" class="upload-icon" id="uploaded-image">
                 <button class="btn-upload" id="btn-upload">+ Ajouter photo</button>
                 <input type="file" id="img-upload" accept="image/png, image/jpeg" hidden>
                 <p class="upload-info" id="upload-info">jpg, png : 4mo max</p>
             </div>
 			<form class="modal-form" id="modal-form" method="post">
 				<input type="hidden" id="work-id" />
-                <label for="title">Titre</label>
-			    <input type="text" name="title" id="title">
-			    <label for="category">Catégorie</label>
-			    <select name="category" id="category">
+                <label for="work-title">Titre</label>
+			    <input type="text" name="title" id="work-title">
+			    <label for="work-category">Catégorie</label>
+			    <select name="category" id="work-category">
 					<option value="">- Choisissez une catégorie -</option>
 				</select>
                 <hr>
-                <button class="button-send button-add" id="btn-send-work" disabled>Valider</button>
+                <button class="button-add disabled" id="btn-send-work">Valider</button>
             </form>
 		</div>
 	</div>
