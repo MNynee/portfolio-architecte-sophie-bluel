@@ -53,11 +53,23 @@
         }
     }
 
+    async function getCategories() {
+        try {
+            const response = await fetch('http://localhost:5678/api/categories')
+            return await response.json()
+        } catch (error) {
+            alert('On n\'arrive pas à trouver les catégories.')
+            throw error
+        }
+    }
+
+    const token = localStorage.getItem('token')
+
     async function addNewWork(work) {
         try {
             const response = await fetch('http://localhost:5678/api/works', {
                 method: 'POST',
-                headers: { contentType: multitype/form-data, Authorization: `Bearer ${localStorage.getItem('token')}`},
+                headers: { Authorization: `Bearer ${token}`},
                 body: JSON.stringify(work)
             })
 
@@ -72,6 +84,7 @@
         try {
             await fetch(`http://localhost:5678/api/works/${workId}`, {
                 method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}`},
             })
         } catch (error) {
             alert('On n\'arrive pas à supprimer cet ouvrage.')
@@ -79,4 +92,4 @@
         }
     }
 
-    export {getWorks, loginUser, getWorkById, addNewWork, deleteWork}
+    export {getWorks, loginUser, getWorkById, getCategories, addNewWork, deleteWork}

@@ -1,4 +1,4 @@
-import { getWorks, loginUser, getWorkById } from "./api.js";
+import { getWorks, loginUser, getWorkById, getCategories } from "./api.js";
 
 const works = await getWorks();
 const gallery = document.getElementById("gallery");
@@ -230,6 +230,19 @@ inputUpload.addEventListener('change', async (e) => {
     }
 })
 
+// - Generate categories options
+
+async function renderCategories() {
+    const categoriesSelect = document.getElementById('category')
+    const categories = await getCategories()
+    categories.forEach((category) => {
+        const optionElement = document.createElement('option')
+        optionElement.value = category.name
+        optionElement.innerText = category.name
+        categoriesSelect.appendChild(optionElement)
+    })
+}
+
 // Reset form
 
 function resetForm() {
@@ -250,3 +263,4 @@ if (document.getElementById('login-form')) {
     loginUser();
 }
 updateNavAfterAuthentication()
+renderCategories()

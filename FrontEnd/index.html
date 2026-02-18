@@ -98,10 +98,13 @@
                 <p class="upload-info" id="upload-info">jpg, png : 4mo max</p>
             </div>
 			<form class="modal-form" id="modal-form" method="post">
+				<input type="hidden" id="work-id" />
                 <label for="title">Titre</label>
 			    <input type="text" name="title" id="title">
 			    <label for="category">Catégorie</label>
-			    <select name="category" id="category"></select>
+			    <select name="category" id="category">
+					<option value="">- Choisissez une catégorie -</option>
+				</select>
                 <hr>
                 <button class="button-send button-add" id="btn-send-work" disabled>Valider</button>
             </form>
