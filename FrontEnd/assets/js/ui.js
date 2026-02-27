@@ -1,12 +1,18 @@
-import { getWorks, loginUser } from "./api.js";
+import { getWorks, loginUser, addNewWork, deleteWork, getCategories } from "./api.js";
+
+if (document.getElementById("login-form")) {
+  loginUser();
+}
 
 const works = await getWorks();
 const gallery = document.getElementById("gallery");
-const modalGallery = document.querySelector('.modal-gallery');
+const modalGallery = document.querySelector(".modal-gallery");
 
 // Afficher tous les projets
 
 async function renderWorks(galleryName, worksList) {
+  if (!galleryName) return;
+
   galleryName.innerHTML = "";
 
   worksList.forEach((work) => {
@@ -18,22 +24,32 @@ async function renderWorks(galleryName, worksList) {
     articleImg.alt = work.title;
 
     if (galleryName === gallery) {
-        const articleTitle = document.createElement("figcaption");
-        articleTitle.innerText = work.title;
+      const articleTitle = document.createElement("figcaption");
+      articleTitle.innerText = work.title;
 
-        article.append(articleImg, articleTitle);
+      article.append(articleImg, articleTitle);
     }
     if (galleryName === modalGallery) {
-        const deleteButton = document.createElement("button");
-        deleteButton.setAttribute('id', 'delete-button');
-        deleteButton.addEventListener('click', () => deleteWork())
+      const deleteButton = document.createElement("button");
+      deleteButton.setAttribute("id", "delete-button");
+      deleteButton.addEventListener("click", async () => {
+        try {
+          await deleteWork(work.id);
+          const updatedWorks = await getWorks();
+          renderWorks(modalGallery, updatedWorks);
+          renderWorks(gallery, updatedWorks);
+        } catch (error) {
+          alert("On n'arrive pas à supprimer cet ouvrage.");
+          throw error;
+        }
+      });
 
-        const deleteIcon = document.createElement("img");
-        deleteIcon.src = "./assets/icons/delete-button.svg";
-        deleteIcon.alt = "Delete";
+      const deleteIcon = document.createElement("img");
+      deleteIcon.src = "./assets/icons/delete-button.svg";
+      deleteIcon.alt = "Delete";
 
-        deleteButton.appendChild(deleteIcon);
-        article.append(articleImg, deleteButton);
+      deleteButton.appendChild(deleteIcon);
+      article.append(articleImg, deleteButton);
     }
 
     galleryName.appendChild(article);
@@ -75,105 +91,256 @@ filterButtons.forEach((button) => {
 // Update page after authentication
 
 function updateNavAfterAuthentication() {
-    const loginLink = document.getElementById('login-link')
-    const editHeader = document.querySelector('.edit-mode-header')
-    const editButton = document.getElementById('edit-button')
-    const filters = document.querySelector('.filters')
-    const galleryTitle = document.querySelector('.portfolio-title')
+  const loginLink = document.getElementById("login-link");
+  const editHeader = document.querySelector(".edit-mode-header");
+  const editButton = document.getElementById("edit-button");
+  const filters = document.querySelector(".filters");
+  const galleryTitle = document.querySelector(".portfolio-title");
 
-    if (localStorage.getItem('token')) {
-        loginLink.innerText = 'logout';
-        loginLink.href = '#'
-        loginLink.addEventListener('click', (event) => {
-            event.preventDefault()
-            localStorage.removeItem('token')
-            localStorage.removeItem('userId')
-            window.location.reload()
-        })
+  if (!loginLink) return;
 
-        editHeader.style.display = 'flex'
-        editButton.style.display = 'flex'
-        filters.style.display = 'none'
-        galleryTitle.style.marginBottom = '92px'
-    } else {
-        loginLink.innerText = 'login'
-        loginLink.href = 'pages/login.html'
-    }
+  if (localStorage.getItem("token")) {
+    loginLink.innerText = "logout";
+    loginLink.href = "#";
+    loginLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      window.location.reload();
+    });
+
+    editHeader.style.display = "flex";
+    editButton.style.display = "flex";
+    filters.style.display = "none";
+    galleryTitle.style.marginBottom = "92px";
+  } else {
+    loginLink.innerText = "login";
+    loginLink.href = "pages/login.html";
+  }
 }
 
 // MODAL FUNCTIONS
 
 // Open edit gallery modal
 
-const btnEditWorks = document.getElementById('edit-button');
-const modal = document.getElementById('modal');
-const modalNav = document.getElementById('modal-nav-1');
-const modalContent = document.getElementById('modal-content-1');
-const modalNav2 = document.getElementById('modal-nav-2'); 
-const modalContent2 = document.getElementById('modal-content-2');
+const btnEditWorks = document.getElementById("edit-button");
+const modal = document.getElementById("modal");
+const modalNav = document.getElementById("modal-nav-1");
+const modalContent = document.getElementById("modal-content-1");
+const modalNav2 = document.getElementById("modal-nav-2");
+const modalContent2 = document.getElementById("modal-content-2");
 
-btnEditWorks.addEventListener('click', openModal)
+if (btnEditWorks) btnEditWorks.addEventListener("click", openModal);
 
 function openModal() {
-    modal.style.display = 'flex';
-    modal.removeAttribute('aria-hidden');
-    modal.setAttribute('aria-modal', 'true');
-    modal.addEventListener('click', closeModal)
-    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)
+  modal.style.display = "flex";
+  modal.removeAttribute("aria-hidden");
+  modal.setAttribute("aria-modal", "true");
+  modal.addEventListener("click", closeModal);
+  modal.querySelectorAll(".js-close-modal").forEach((button) => {
+    button.addEventListener('click', closeModal);
+  });
+  modal.querySelector(".js-modal-stop").addEventListener("click", stopPropagation);
 }
 
 // Close modal
 
-const btnCloseModal = document.getElementById('close-modal');
-btnCloseModal.addEventListener('click', closeModal)
-
 function closeModal() {
-    if (modal.classList.contains('modal-2')) {
-        modal.classList.remove('modal-2');
-        modalNav2.style.display = 'none';
-        modalContent2.style.display = 'none';
-        modalNav.style.display = 'flex';
-        modalContent.style.display = 'block';
-    }
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden', 'true');
-    modal.removeAttribute('aria-modal');
-    modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)
+  if (modal.classList.contains("modal-2")) {
+    resetForm();
+    modal.classList.remove("modal-2");
+    modalNav2.style.display = "none";
+    modalContent2.style.display = "none";
+    modalNav.style.display = "flex";
+    modalContent.style.display = "block";
+  }
+  modal.style.display = "none";
+  // modal.setAttribute('aria-hidden', 'true');
+  modal.removeAttribute("aria-modal");
+  modal.querySelector(".js-close-modal").removeEventListener("click", closeModal);
+  modal.querySelector(".js-modal-stop").removeEventListener("click", stopPropagation);
 }
 
 function stopPropagation(e) {
-    e.stopPropagation();
+  e.stopPropagation();
 }
 
 // Change between modals
 
-const btnAddWork = document.getElementById('btn-add-work');
-btnAddWork.addEventListener('click', changeModal)
+const btnAddWork = document.getElementById("btn-add-work");
+if (btnAddWork) btnAddWork.addEventListener("click", changeModal);
 
-const btnReturnModal = document.getElementById('return-modal');
-btnReturnModal.addEventListener('click', changeModal)
+const btnReturnModal = document.getElementById("return-modal");
+if (btnReturnModal) btnReturnModal.addEventListener("click", changeModal);
 
 function changeModal() {
-     if (modal.classList.contains('modal-2')) {
-        modal.classList.remove('modal-2');
-        modalNav2.style.display = 'none';
-        modalContent2.style.display = 'none';
-        modalNav.style.display = 'flex';
-        modalContent.style.display = 'block';
-    } else {
-        modal.classList.add('modal-2');
-        modalNav.style.display = 'none';
-        modalContent.style.display = 'none';
-        modalNav2.style.display = 'flex';
-        modalContent2.style.display = 'block';
+  if (modal.classList.contains("modal-2")) {
+    modal.classList.remove("modal-2");
+    modalNav2.style.display = "none";
+    modalContent2.style.display = "none";
+    modalNav.style.display = "flex";
+    modalContent.style.display = "block";
+    resetForm();
+  } else {
+    modal.classList.add("modal-2");
+    modalNav.style.display = "none";
+    modalContent.style.display = "none";
+    modalNav2.style.display = "flex";
+    modalContent2.style.display = "block";
+  }
+}
+
+// Add new project
+
+const inputImage = document.getElementById("img-upload");
+const inputTitle = document.getElementById("work-title");
+const categoriesSelect = document.getElementById("work-category");
+const btnSendWork = document.getElementById("btn-send-work");
+const formNewWork = document.getElementById('modal-form');
+
+// - Reading image file
+
+const imgContainer = document.querySelector(".img-container");
+
+if (imgContainer) {
+  imgContainer.addEventListener("click", () => {
+    inputImage.click();
+  });
+}
+
+function readFileContent(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve({ url: reader.result, name: file.name });
+    };
+    reader.onerror = () => {
+      reject(`On n\'arrive pas a lire le fichier ${file.name}`);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+// - Exhibiting image file
+
+const imgUploaded = document.getElementById("uploaded-image");
+const btnUpload = document.getElementById("btn-upload");
+const btnInfo = document.getElementById("upload-info");
+
+if (inputImage) {
+  inputImage.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const fileContent = await readFileContent(file);
+        imgUploaded.src = fileContent.url;
+        if (imgUploaded.src !== ".assets/icons/upload-image.png") {
+          imgContainer.style.padding = "0";
+          imgUploaded.style.maxHeight = "169px";
+          btnUpload.style.display = "none";
+          btnInfo.style.display = "none";
+        }
+      } catch (error) {
+        alert("On n'arrive pas à lire ce fichier.");
+        throw error;
+      }
     }
+  });
+}
+
+
+// - Generate categories options
+const categories = await getCategories();
+
+async function renderCategories() {
+  if (!categoriesSelect) return;
+
+  categories.forEach((category) => {
+    const optionElement = document.createElement("option");
+    optionElement.value = category.id;
+    optionElement.innerText = category.name;
+    categoriesSelect.appendChild(optionElement);
+  });
+}
+
+// Capture and send form data
+
+if (formNewWork) {
+  formNewWork.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitWork();
+  });
+}
+
+
+async function submitWork() {
+    const file = inputImage.files[0];
+    const title = inputTitle.value;
+    const categoryId = parseInt(categoriesSelect.value);
+
+    if (file && title && categoryId) {
+        try {
+            await addNewWork(file, title, categoryId);
+            const updatedWorks = await getWorks();
+            renderWorks(modalGallery, updatedWorks);
+            renderWorks(gallery, updatedWorks);
+            resetForm();
+            changeModal();
+        } catch (error) {
+            alert("Erreur lors de l'ajout du projet.");
+        }
+    }
+}
+
+// Enable/disable submission button
+
+if (categoriesSelect) {
+  categoriesSelect.addEventListener("change", () => {
+    checkFormFields();
+  });
+}
+
+if (inputTitle) {
+  inputTitle.addEventListener("change", () => {
+    checkFormFields();
+  });
+}
+
+
+function checkFormFields() {
+    if (inputImage.files.length > 0 &&
+    inputTitle.value !== "" &&
+    categoriesSelect.value !== "" &&
+    btnSendWork.classList.contains("disabled")) {
+
+    btnSendWork.classList.toggle("disabled");
+
+  } else if (inputImage.files.length === 0 ||
+    inputTitle.value.trim() === "" ||
+    categoriesSelect.value === "" &&
+    !btnSendWork.classList.contains("disabled")) {
+      
+    btnSendWork.classList.toggle("disabled");
+  }
+}
+
+// Reset form
+
+function resetForm() {
+  const form = document.getElementById("modal-form");
+  form.reset();
+
+  imgContainer.style.padding = "22px 0 19px";
+  imgUploaded.src = "./assets/icons/upload-image.png";
+  btnUpload.style.display = "block";
+  btnInfo.style.display = "block";
+  btnSendWork.classList.add("disabled");
 }
 
 // FUNCTION CALLS
 
 renderWorks(gallery, works);
 renderWorks(modalGallery, works);
-if (document.getElementById('login-form')) {
-    loginUser();
-}
-updateNavAfterAuthentication()
+updateNavAfterAuthentication();
+renderCategories();
