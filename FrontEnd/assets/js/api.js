@@ -1,3 +1,5 @@
+// Get list of works from API
+
 async function getWorks() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -8,10 +10,16 @@ async function getWorks() {
   }
 }
 
+// Send credentials to authenticate login
+
 async function loginUser() {
   const loginForm = document.getElementById("login-form");
+  
+  if (!loginForm) return;
+
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    event.stopPropagation();
     try {
       const userData = {
         email: document.getElementById("userEmail").value,
@@ -23,12 +31,13 @@ async function loginUser() {
         headers: { "Content-Type": "application/json" },
         body: payload,
       });
-
+      
       if (!response.ok) {
         const errorData = await response.json();
         const errorElement = document.querySelector("#error-message p");
         errorElement.parentElement.hidden = false;
         return;
+
       } else {
         const data = await response.json();
         localStorage.setItem("token", data.token);
@@ -42,15 +51,7 @@ async function loginUser() {
   });
 }
 
-async function getWorkById(workId) {
-  try {
-    const response = await fetch(`http://localhost:5678/api/works/${workId}`);
-    return await response.json();
-  } catch (error) {
-    alert("On n'arrive pas à trouver cet ouvrage.");
-    throw error;
-  }
-}
+// Get list of categories from API
 
 async function getCategories() {
   try {
@@ -62,9 +63,11 @@ async function getCategories() {
   }
 }
 
+// Send new work data to API
+
 const token = localStorage.getItem("token");
 
-async function addNewWork({ imageFile, title, categoryId }) {
+async function addNewWork(imageFile, title, categoryId) {
   try {
     if (!token) {
       alert("Vous devez être connecté pour ajouter un ouvrage.");
@@ -73,13 +76,13 @@ async function addNewWork({ imageFile, title, categoryId }) {
     }
 
     const formData = new FormData();
-    formData.append("imageUrl", imageFile);
     formData.append("title", title);
-    formData.append("categoryId", categoryId);
+    formData.append("image", imageFile);
+    formData.append("category", categoryId);
 
     const response = await fetch("http://localhost:5678/api/works", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { "Authorization": `Bearer ${token}` },
       body: formData,
     });
 
@@ -89,12 +92,14 @@ async function addNewWork({ imageFile, title, categoryId }) {
     }
 
     return await response.json();
-    
+
   } catch (error) {
     alert("On n'arrive pas à ajouter cet ouvrage.");
     throw error;
   }
 }
+
+// Delete work data from API
 
 async function deleteWork(workId) {
   try {
@@ -111,7 +116,6 @@ async function deleteWork(workId) {
 export {
   getWorks,
   loginUser,
-  getWorkById,
   getCategories,
   addNewWork,
   deleteWork,
