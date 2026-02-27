@@ -273,11 +273,17 @@ if (formNewWork) {
   });
 }
 
-
 async function submitWork() {
     const file = inputImage.files[0];
     const title = inputTitle.value;
     const categoryId = parseInt(categoriesSelect.value);
+
+    const titleNoSpaces = removeSpaces(title);
+
+    if(!validateTitle(titleNoSpaces)) {
+      alert('Titre invalide. Le titre doit avoir au moins 6 caractères et vous ne pouvez pas utiliser des numéros.')
+      return
+    }
 
     if (file && title && categoryId) {
         try {
@@ -337,6 +343,19 @@ function resetForm() {
   btnInfo.style.display = "block";
   btnSendWork.classList.add("disabled");
 }
+
+// Validate form fields
+
+const regexTitle = /^[A-Za-z\sçãàáâèéêíìîóôõúùûÂÃÁÀÉÊÍÓÔÕÚÇ\"\'!&?%:;.,-]{6,}$/
+
+function validateTitle(title) {
+  return regexTitle.test(title)
+}
+
+function removeSpaces(string) {
+    return string.replaceAll(/\s+/g, '')
+}
+
 
 // FUNCTION CALLS
 
