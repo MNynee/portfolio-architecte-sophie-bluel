@@ -202,6 +202,7 @@ li a:hover {
 	display: none;
 	align-items: center;
 	justify-content: center;
+	margin: 0;
 }
 
 .modal-wrapper {
